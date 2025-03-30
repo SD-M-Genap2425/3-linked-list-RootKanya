@@ -1,5 +1,8 @@
 namespace LinkedList.ManajemenKaryawan;
 
+using System.Collections.Generic;
+using System.Text;
+
 public class Karyawan
 {
     public string NomorKaryawan { get; }
@@ -17,8 +20,8 @@ public class Karyawan
 public class KaryawanNode
 {
     public Karyawan Data { get; }
-    public KaryawanNode Next { get; set; }
-    public KaryawanNode Prev { get; set; }
+    public KaryawanNode? Next { get; set; }
+    public KaryawanNode? Prev { get; set; } 
 
     public KaryawanNode(Karyawan karyawan)
     {
@@ -26,12 +29,14 @@ public class KaryawanNode
         Next = null;
         Prev = null;
     }
+    
+    public Karyawan Karyawan => Data;
 }
 
 public class DaftarKaryawan
 {
-    private KaryawanNode head;
-    private KaryawanNode tail;
+    private KaryawanNode? head; 
+    private KaryawanNode? tail;
 
     public void TambahKaryawan(Karyawan karyawan)
     {
@@ -42,7 +47,7 @@ public class DaftarKaryawan
         }
         else
         {
-            tail.Next = newNode;
+            tail!.Next = newNode;
             newNode.Prev = tail;
             tail = newNode;
         }
@@ -50,8 +55,7 @@ public class DaftarKaryawan
 
     public bool HapusKaryawan(string nomorKaryawan)
     {
-        KaryawanNode temp = head;
-
+        KaryawanNode? temp = head;
         while (temp != null)
         {
             if (temp.Data.NomorKaryawan == nomorKaryawan)
@@ -73,7 +77,6 @@ public class DaftarKaryawan
                 {
                     tail = temp.Prev;
                 }
-
                 return true;
             }
             temp = temp.Next;
@@ -84,7 +87,7 @@ public class DaftarKaryawan
     public Karyawan[] CariKaryawan(string kataKunci)
     {
         List<Karyawan> hasil = new List<Karyawan>();
-        KaryawanNode temp = head;
+        KaryawanNode? temp = head;
         while (temp != null)
         {
             if (temp.Data.Nama.Contains(kataKunci) || temp.Data.Posisi.Contains(kataKunci))
@@ -96,46 +99,51 @@ public class DaftarKaryawan
         return hasil.ToArray();
     }
 
-    public void TampilkanDaftar()
+    public string TampilkanDaftar()
     {
-        KaryawanNode temp = tail;
+        StringBuilder sb = new StringBuilder();
+        KaryawanNode? temp = tail;
         while (temp != null)
         {
-            Console.WriteLine($"{temp.Data.NomorKaryawan}; {temp.Data.Nama}; {temp.Data.Posisi}");
+            sb.AppendLine($"{temp.Data.NomorKaryawan}; {temp.Data.Nama}; {temp.Data.Posisi}");
             temp = temp.Prev;
         }
+        return sb.ToString().TrimEnd();
     }
 }
 
 public class ManajemenKaryawanApp
 {
-    public static void Run()
+    public static string Run()
     {
+        StringBuilder sb = new StringBuilder();
         DaftarKaryawan daftar = new DaftarKaryawan();
 
         daftar.TambahKaryawan(new Karyawan("001", "John Doe", "Manager"));
         daftar.TambahKaryawan(new Karyawan("002", "Jane Doe", "HR"));
         daftar.TambahKaryawan(new Karyawan("003", "Bob Smith", "IT"));
 
-        Console.WriteLine("Daftar Karyawan Awal:");
-        daftar.TampilkanDaftar();
-        Console.WriteLine();
+        sb.AppendLine("Daftar Karyawan Awal:");
+        sb.AppendLine(daftar.TampilkanDaftar());
+        sb.AppendLine();
 
-        Console.WriteLine("Menghapus '002'...");
+        sb.AppendLine("Menghapus '002'...");
         bool berhasil = daftar.HapusKaryawan("002");
-        Console.WriteLine(berhasil ? "Karyawan berhasil dihapus." : "Karyawan tidak ditemukan.");
-        Console.WriteLine();
+        sb.AppendLine(berhasil ? "Karyawan berhasil dihapus." : "Karyawan tidak ditemukan.");
+        sb.AppendLine();
 
-        Console.WriteLine("Daftar Karyawan Setelah Penghapusan:");
-        daftar.TampilkanDaftar();
-        Console.WriteLine();
+        sb.AppendLine("Daftar Karyawan Setelah Penghapusan:");
+        sb.AppendLine(daftar.TampilkanDaftar());
+        sb.AppendLine();
 
-        Console.WriteLine("Mencari Karyawan dengan kata kunci 'IT':");
+        sb.AppendLine("Mencari Karyawan dengan kata kunci 'IT':");
         Karyawan[] hasilCari = daftar.CariKaryawan("IT");
         foreach (var karyawan in hasilCari)
         {
-            Console.WriteLine($"{karyawan.NomorKaryawan}; {karyawan.Nama}; {karyawan.Posisi}");
+            sb.AppendLine($"{karyawan.NomorKaryawan}; {karyawan.Nama}; {karyawan.Posisi}");
         }
-        Console.WriteLine();
+        sb.AppendLine();
+
+        return sb.ToString();
     }
 }

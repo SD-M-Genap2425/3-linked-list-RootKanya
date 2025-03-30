@@ -1,4 +1,8 @@
+
 namespace LinkedList.Perpustakaan;
+
+using System.Collections.Generic;
+using System.Text;
 
 public class Buku
 {
@@ -17,18 +21,17 @@ public class Buku
 public class BukuNode
 {
     public Buku Data { get; }
-    public BukuNode Next { get; set; }
+    public BukuNode? Next { get; set; }  
 
     public BukuNode(Buku buku)
     {
         Data = buku;
-        Next = null;
+        Next = null;  
     }
 }
-
 public class KoleksiPerpustakaan
 {
-    private BukuNode head;
+    private BukuNode? head;  
 
     public void TambahBuku(Buku buku)
     {
@@ -73,7 +76,7 @@ public class KoleksiPerpustakaan
     public Buku[] CariBuku(string kataKunci)
     {
         List<Buku> hasil = new List<Buku>();
-        BukuNode temp = head;
+        BukuNode? temp = head;
         while (temp != null)
         {
             if (temp.Data.Judul.Contains(kataKunci))
@@ -85,21 +88,24 @@ public class KoleksiPerpustakaan
         return hasil.ToArray();
     }
 
-    public void TampilkanKoleksi()
+    public string TampilkanKoleksi()
     {
-        BukuNode temp = head;
+        StringBuilder sb = new StringBuilder();
+        BukuNode? temp = head;
         while (temp != null)
         {
-            Console.WriteLine($"\"{temp.Data.Judul}\"; {temp.Data.Penulis}; {temp.Data.Tahun}");
+            sb.AppendLine($"\"{temp.Data.Judul}\"; {temp.Data.Penulis}; {temp.Data.Tahun}");
             temp = temp.Next;
         }
+        return sb.ToString().TrimEnd();
     }
 }
 
 public class PerpustakaanApp
 {
-    public static void Run()
+    public static string Run()
     {
+        StringBuilder sb = new StringBuilder();
         KoleksiPerpustakaan perpustakaan = new KoleksiPerpustakaan();
 
         perpustakaan.TambahBuku(new Buku("The Hobbit", "J.R.R. Tolkien", 1937));
@@ -107,25 +113,27 @@ public class PerpustakaanApp
         perpustakaan.TambahBuku(new Buku("The Catcher in the Rye", "J.D. Salinger", 1951));
         perpustakaan.TambahBuku(new Buku("Harry Potter", "J.K. Rowling", 1997));
 
-        Console.WriteLine("Koleksi Awal:");
-        perpustakaan.TampilkanKoleksi();
-        Console.WriteLine();
+        sb.AppendLine("Koleksi Awal:");
+        sb.AppendLine(perpustakaan.TampilkanKoleksi());
+        sb.AppendLine();
 
-        Console.WriteLine("Menghapus '1984'...");
+        sb.AppendLine("Menghapus '1984'...");
         bool berhasil = perpustakaan.HapusBuku("1984");
-        Console.WriteLine(berhasil ? "Buku berhasil dihapus." : "Buku tidak ditemukan.");
-        Console.WriteLine();
+        sb.AppendLine(berhasil ? "Buku berhasil dihapus." : "Buku tidak ditemukan.");
+        sb.AppendLine();
 
-        Console.WriteLine("Koleksi Setelah Penghapusan:");
-        perpustakaan.TampilkanKoleksi();
-        Console.WriteLine();
+        sb.AppendLine("Koleksi Setelah Penghapusan:");
+        sb.AppendLine(perpustakaan.TampilkanKoleksi());
+        sb.AppendLine();
 
-        Console.WriteLine("Mencari Buku dengan kata kunci 'Harry':");
+        sb.AppendLine("Mencari Buku dengan kata kunci 'Harry':");
         Buku[] hasilCari = perpustakaan.CariBuku("Harry");
         foreach (var buku in hasilCari)
         {
-            Console.WriteLine($"\"{buku.Judul}\"; {buku.Penulis}; {buku.Tahun}");
+            sb.AppendLine($"\"{buku.Judul}\"; {buku.Penulis}; {buku.Tahun}");
         }
-        Console.WriteLine();
+        sb.AppendLine();
+
+        return sb.ToString();
     }
 }
