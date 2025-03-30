@@ -1,5 +1,9 @@
 namespace LinkedList.Inventori;
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 public class Item
 {
     public string Nama { get; }
@@ -12,94 +16,62 @@ public class Item
     }
 }
 
-public class ItemNode
-{
-    public Item Data { get; }
-    public ItemNode Next { get; set; }
-
-    public ItemNode(Item item)
-    {
-        Data = item;
-        Next = null;
-    }
-}
-
 public class ManajemenInventori
 {
-    private ItemNode head;
+    private LinkedList<Item> inventori = new LinkedList<Item>();
 
     public void TambahItem(Item item)
     {
-        ItemNode newNode = new ItemNode(item);
-        if (head == null)
-        {
-            head = newNode;
-        }
-        else
-        {
-            ItemNode temp = head;
-            while (temp.Next != null)
-            {
-                temp = temp.Next;
-            }
-            temp.Next = newNode;
-        }
+        inventori.AddLast(item);
     }
 
     public bool HapusItem(string nama)
     {
-        if (head == null) return false;
-
-        if (head.Data.Nama == nama)
+        var node = inventori.First;
+        while (node != null)
         {
-            head = head.Next;
-            return true;
+            if (node.Value.Nama == nama)
+            {
+                inventori.Remove(node);
+                return true;
+            }
+            node = node.Next;
         }
-
-        ItemNode temp = head;
-        while (temp.Next != null && temp.Next.Data.Nama != nama)
-        {
-            temp = temp.Next;
-        }
-
-        if (temp.Next == null) return false;
-
-        temp.Next = temp.Next.Next;
-        return true;
+        return false;
     }
 
-    public void TampilkanInventori()
+    public string TampilkanInventori()
     {
-        ItemNode temp = head;
-        while (temp != null)
+        StringBuilder sb = new StringBuilder();
+        foreach (var item in inventori)
         {
-            Console.WriteLine($"{temp.Data.Nama}; Kuantitas: {temp.Data.Kuantitas}");
-            temp = temp.Next;
+            sb.AppendLine($"{item.Nama}; {item.Kuantitas}");
         }
+        return sb.ToString().TrimEnd();
     }
-}
 
-public class ManajemenInventoriApp
-{
-    public static void Run()
+    public static string Run() 
     {
+        StringBuilder sb = new StringBuilder();
         ManajemenInventori inventori = new ManajemenInventori();
 
         inventori.TambahItem(new Item("Laptop", 10));
         inventori.TambahItem(new Item("Mouse", 25));
         inventori.TambahItem(new Item("Keyboard", 15));
 
-        Console.WriteLine("Inventori Awal:");
-        inventori.TampilkanInventori();
-        Console.WriteLine();
+        sb.AppendLine("Inventori Awal:");
+        sb.AppendLine(inventori.TampilkanInventori());
+        sb.AppendLine();
 
-        Console.WriteLine("Menghapus 'Mouse'...");
+        sb.AppendLine("Menghapus 'Mouse'...");
         bool berhasil = inventori.HapusItem("Mouse");
-        Console.WriteLine(berhasil ? "Item berhasil dihapus." : "Item tidak ditemukan.");
-        Console.WriteLine();
+        sb.AppendLine(berhasil ? "Item berhasil dihapus." : "Item tidak ditemukan.");
+        sb.AppendLine();
 
-        Console.WriteLine("Inventori Setelah Penghapusan:");
-        inventori.TampilkanInventori();
-        Console.WriteLine();
+        sb.AppendLine("Inventori Setelah Penghapusan:");
+        sb.AppendLine(inventori.TampilkanInventori());
+        sb.AppendLine();
+
+        return sb.ToString();
     }
 }
